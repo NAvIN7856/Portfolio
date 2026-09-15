@@ -1,22 +1,51 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { StarfieldCanvas } from './components/StarfieldCanvas';
-import { CosmicHeader } from './components/CosmicHeader';
 import { PlanetStage } from './components/PlanetStage';
 import { ContentPanel } from './components/ContentPanel';
 import { SectorDial } from './components/SectorDial';
 import { SECTIONS } from './data/portfolioData';
 import { cosmicAudio } from './utils/audio';
+import { Volume2, VolumeX } from 'lucide-react';
 
 export const App: React.FC = () => {
+  const [activeSectorIndex, setActiveSectorIndex] = useState<number>(0);
+  const [targetSectorIndex, setTargetSectorIndex] = useState<number>(0);
   const [targetRotation, setTargetRotation] = useState<number>(0);
   const [currentRotation, setCurrentRotation] = useState<number>(0);
-  const [activeSectorIndex, setActiveSectorIndex] = useState<number>(0);
+  const [isRotating, setIsRotating] = useState<boolean>(false);
   const [soundEnabled, setSoundEnabled] = useState<boolean>(false);
 
-  const currentRotationRef = useRef<number>(0);
+  const activeSectorIndexRef = useRef<number>(0);
+  const targetSectorIndexRef = useRef<number>(0);
   const targetRotationRef = useRef<number>(0);
-  const prevSectorRef = useRef<number>(0);
+  const currentRotationRef = useRef<number>(0);
+  const isRotatingRef = useRef<boolean>(false);
+  const soundEnabledRef = useRef<boolean>(false);
+  const scrollAccumulatorRef = useRef<number>(0);
+  const cardRef = useRef<HTMLDivElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const touchStartYRef = useRef<number | null>(null);
+
+  // Keep refs synchronized
+  activeSectorIndexRef.current = activeSectorIndex;
+  soundEnabledRef.current = soundEnabled;
+
+  // Initiates smooth rotation to a designated sector
+  const startRotationToSector = useCallback((targetIndex: number) => {
+    if (targetIndex < 0 || targetIndex >= SECTIONS.length) return;
+    if (targetIndex === activeSectorIndexRef.current && !isRotatingRef.current) return;
+
+    targetSectorIndexRef.current = targetIndex;
+    setTargetSectorIndex(targetIndex);
+
+    const newTargetRotation = targetIndex * -90;
+    targetRotationRef.current = newTargetRotation;
+    setTargetRotation(newTargetRotation);
+
+    setIsRotating(true);
+    isRotatingRef.current = true;
+    scrollAccumulatorRef.current = 0;
+  }, []);
 
   // Smooth LERP animation loop for cinematic rotation
   useEffect(() => {
@@ -25,28 +54,31 @@ export const App: React.FC = () => {
       const target = targetRotationRef.current;
       const diff = target - current;
 
-      if (Math.abs(diff) > 0.02) {
-        // Ease with 0.08 lerp factor for smooth cinematic damping
-        const next = current + diff * 0.08;
+      if (Math.abs(diff) > 0.15) {
+        // Smooth cinematic ease (0.07 damping factor)
+        const next = current + diff * 0.07;
         currentRotationRef.current = next;
         setCurrentRotation(next);
-      } else if (current !== target) {
+      } else if (isRotatingRef.current || current !== target) {
+        // Astronaut/category has reached its position!
         currentRotationRef.current = target;
         setCurrentRotation(target);
-      }
 
-      // Determine active sector based on current rotation
-      // Sector 0: 0°, Sector 1: -90°, Sector 2: -180°, Sector 3: -270°
-      const normalizedSector = Math.min(
-        3,
-        Math.max(0, Math.round(Math.abs(currentRotationRef.current) / 90))
-      );
+        // Stop the rotation and lock Earth still!
+        setIsRotating(false);
+        isRotatingRef.current = false;
 
-      if (normalizedSector !== prevSectorRef.current) {
-        prevSectorRef.current = normalizedSector;
-        setActiveSectorIndex(normalizedSector);
-        if (soundEnabled) {
-          cosmicAudio.playSectorBlip(normalizedSector);
+        const finalSector = targetSectorIndexRef.current;
+        setActiveSectorIndex(finalSector);
+        activeSectorIndexRef.current = finalSector;
+
+        // Reset newly arrived category content scroll to top
+        if (cardRef.current) {
+          cardRef.current.scrollTop = 0;
+        }
+
+        if (soundEnabledRef.current) {
+          cosmicAudio.playSectorBlip(finalSector);
         }
       }
 
@@ -60,69 +92,186 @@ export const App: React.FC = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [soundEnabled]);
+  }, []);
 
-  // Scroll listener: maps page scroll directly to rotation
+  // Wheel listener:
+  // - Keeps Earth completely still while category content is being viewed/scrolled
+  // - Only after content is finished (at bottom), rotates Earth on scroll to next category
+  // - Once next astronaut reaches position, stops rotation
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    const handleWheel = (e: WheelEvent) => {
+      const deltaY = e.deltaY;
+      if (Math.abs(deltaY) < 1) return;
 
-      if (maxScroll <= 0) return;
+      const card = cardRef.current;
+      const isOverCard = card && (e.target instanceof Node) && card.contains(e.target);
 
-      const progress = Math.min(Math.max(scrollY / maxScroll, 0), 1);
-      // Total rotation spanning 4 sectors: 0° -> -270°
-      const newTargetRotation = progress * -270;
-      targetRotationRef.current = newTargetRotation;
-      setTargetRotation(newTargetRotation);
+      // Measure whether the active category card can still scroll down or up
+      let canScrollDown = false;
+      let canScrollUp = false;
+
+      if (card) {
+        const remainingDown = card.scrollHeight - card.clientHeight - card.scrollTop;
+        canScrollDown = remainingDown > 10;
+        canScrollUp = card.scrollTop > 10;
+      }
+
+      // If Earth is actively rotating, prevent browser bounce
+      if (isRotatingRef.current) {
+        e.preventDefault();
+        return;
+      }
+
+      // User scrolls DOWN (advancing content or moving forward)
+      if (deltaY > 0) {
+        if (canScrollDown) {
+          if (isOverCard) {
+            scrollAccumulatorRef.current = 0;
+            return;
+          } else {
+            if (card) {
+              card.scrollTop += deltaY;
+            }
+            scrollAccumulatorRef.current = 0;
+            e.preventDefault();
+            return;
+          }
+        }
+
+        // Category content is fully finished (at bottom or fits on screen)!
+        if (activeSectorIndexRef.current < SECTIONS.length - 1) {
+          e.preventDefault();
+          scrollAccumulatorRef.current += deltaY;
+          if (scrollAccumulatorRef.current >= 35) {
+            scrollAccumulatorRef.current = 0;
+            startRotationToSector(activeSectorIndexRef.current + 1);
+          }
+        }
+      }
+
+      // User scrolls UP (scrolling up within content or moving backward)
+      else if (deltaY < 0) {
+        if (canScrollUp) {
+          if (isOverCard) {
+            scrollAccumulatorRef.current = 0;
+            return;
+          } else {
+            if (card) {
+              card.scrollTop += deltaY;
+            }
+            scrollAccumulatorRef.current = 0;
+            e.preventDefault();
+            return;
+          }
+        }
+
+        // At top of category content!
+        if (activeSectorIndexRef.current > 0) {
+          e.preventDefault();
+          scrollAccumulatorRef.current += deltaY;
+          if (scrollAccumulatorRef.current <= -35) {
+            scrollAccumulatorRef.current = 0;
+            startRotationToSector(activeSectorIndexRef.current - 1);
+          }
+        }
+      }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    // Run initial computation
-    handleScroll();
+    window.addEventListener('wheel', handleWheel, { passive: false });
+    return () => window.removeEventListener('wheel', handleWheel);
+  }, [startRotationToSector]);
+
+  // Touch gesture support (swipe on mobile / tablets)
+  useEffect(() => {
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        touchStartYRef.current = e.touches[0].clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (touchStartYRef.current === null) return;
+      if (isRotatingRef.current) {
+        e.preventDefault();
+        return;
+      }
+
+      const touchY = e.touches[0].clientY;
+      const deltaY = touchStartYRef.current - touchY;
+      const card = cardRef.current;
+
+      const canScrollDown = card ? (card.scrollHeight - card.clientHeight - card.scrollTop > 10) : false;
+      const canScrollUp = card ? (card.scrollTop > 10) : false;
+
+      if (Math.abs(deltaY) > 50) {
+        if (deltaY > 0 && !canScrollDown && activeSectorIndexRef.current < SECTIONS.length - 1) {
+          touchStartYRef.current = touchY;
+          startRotationToSector(activeSectorIndexRef.current + 1);
+        } else if (deltaY < 0 && !canScrollUp && activeSectorIndexRef.current > 0) {
+          touchStartYRef.current = touchY;
+          startRotationToSector(activeSectorIndexRef.current - 1);
+        }
+      }
+    };
+
+    const handleTouchEnd = () => {
+      touchStartYRef.current = null;
+    };
+
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: false });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
     };
-  }, []);
+  }, [startRotationToSector]);
 
   // Keyboard navigation: Arrow keys & Page keys
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (['input', 'textarea'].includes((e.target as HTMLElement)?.tagName?.toLowerCase())) {
-        return; // Don't intercept when user is typing in form
+        return;
       }
 
-      if (e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === 'PageDown') {
+      const card = cardRef.current;
+      const canScrollDown = card ? (card.scrollHeight - card.clientHeight - card.scrollTop > 10) : false;
+      const canScrollUp = card ? (card.scrollTop > 10) : false;
+
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') {
         e.preventDefault();
-        navigateToSector(Math.min(3, activeSectorIndex + 1));
-      } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        if (canScrollDown && card) {
+          card.scrollTop += 120;
+        } else {
+          startRotationToSector(Math.min(SECTIONS.length - 1, activeSectorIndexRef.current + 1));
+        }
+      } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
         e.preventDefault();
-        navigateToSector(Math.max(0, activeSectorIndex - 1));
+        if (canScrollUp && card) {
+          card.scrollTop -= 120;
+        } else {
+          startRotationToSector(Math.max(0, activeSectorIndexRef.current - 1));
+        }
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        startRotationToSector(Math.min(SECTIONS.length - 1, activeSectorIndexRef.current + 1));
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        startRotationToSector(Math.max(0, activeSectorIndexRef.current - 1));
       } else if (e.key === 'Home') {
         e.preventDefault();
-        navigateToSector(0);
+        startRotationToSector(0);
       } else if (e.key === 'End') {
         e.preventDefault();
-        navigateToSector(3);
+        startRotationToSector(SECTIONS.length - 1);
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeSectorIndex]);
-
-  // Navigate to sector by smoothly scrolling the document
-  const navigateToSector = useCallback((sectorIndex: number) => {
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    const targetProgress = sectorIndex / (SECTIONS.length - 1);
-    const targetScrollY = targetProgress * maxScroll;
-
-    window.scrollTo({
-      top: targetScrollY,
-      behavior: 'smooth',
-    });
-  }, []);
+  }, [startRotationToSector]);
 
   const handleToggleSound = () => {
     if (!soundEnabled) {
@@ -137,44 +286,27 @@ export const App: React.FC = () => {
   return (
     <div className="portfolio-app-root">
       {/* Dynamic Starfield Backdrop */}
-      {/* <StarfieldCanvas rotation={currentRotation} /> */}
-
-      {/* Fixed Cosmic HUD Header */}
-      <CosmicHeader
-        activeSectorIndex={activeSectorIndex}
-        rotation={currentRotation}
-        onSelectSector={navigateToSector}
-        soundEnabled={soundEnabled}
-        onToggleSound={handleToggleSound}
-      />
+      <StarfieldCanvas rotation={currentRotation} />
 
       {/* Main Viewport Presentation Shell */}
       <div className="fixed-hero-stage">
-        {/* Upper Portion: Portfolio Content Panel */}
-        {/* <ContentPanel
+        {/* Full-Screen Content Panel */}
+        <ContentPanel
           activeSectorIndex={activeSectorIndex}
-          onNavigate={navigateToSector}
-        /> */}
+          isRotating={isRotating}
+          targetSectorIndex={targetSectorIndex}
+          onNavigate={startRotationToSector}
+          cardRef={cardRef}
+        />
 
-        {/* Lower Portion: Anchored Giant Rotating Earth */}
+        {/* Anchored Rotating Earth at Bottom Left */}
         <PlanetStage
           rotation={currentRotation}
           activeSectorIndex={activeSectorIndex}
-          onSelectSector={navigateToSector}
+          isRotating={isRotating}
+          onSelectSector={startRotationToSector}
         />
-
-        {/* Side Orbital Telemetry Dial */}
-        {/* <SectorDial
-          activeSectorIndex={activeSectorIndex}
-          rotation={currentRotation}
-          onSelectSector={navigateToSector}
-          onNextSector={() => navigateToSector(Math.min(3, activeSectorIndex + 1))}
-          onPrevSector={() => navigateToSector(Math.max(0, activeSectorIndex - 1))}
-        /> */}
       </div>
-
-      {/* Scroll Spine Container: defines the virtual height to power scroll-driven rotation */}
-      <div className="scroll-spacer-spine" aria-hidden="true" />
     </div>
   );
 };

@@ -6,6 +6,8 @@ interface StarfieldProps {
 
 export const StarfieldCanvas: React.FC<StarfieldProps> = ({ rotation }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const rotationRef = useRef<number>(rotation);
+  rotationRef.current = rotation;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -71,7 +73,7 @@ export const StarfieldCanvas: React.FC<StarfieldProps> = ({ rotation }) => {
       ctx.fillRect(0, 0, width, height);
 
       // Parallax shift based on Earth rotation
-      const parallaxX = (rotation * 0.2) % width;
+      const parallaxX = (rotationRef.current * 0.2) % width;
 
       // Draw stars
       stars.forEach((star) => {
@@ -155,7 +157,7 @@ export const StarfieldCanvas: React.FC<StarfieldProps> = ({ rotation }) => {
       window.removeEventListener('resize', handleResize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [rotation]);
+  }, []);
 
   return (
     <canvas

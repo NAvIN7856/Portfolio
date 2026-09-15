@@ -4,12 +4,14 @@ import { SECTIONS } from '../data/portfolioData';
 interface PlanetStageProps {
   rotation: number;
   activeSectorIndex: number;
+  isRotating?: boolean;
   onSelectSector: (index: number) => void;
 }
 
 export const PlanetStage: React.FC<PlanetStageProps> = ({
   rotation,
   activeSectorIndex,
+  isRotating = false,
   onSelectSector,
 }) => {
   const currentSection = SECTIONS[activeSectorIndex];
@@ -20,22 +22,8 @@ export const PlanetStage: React.FC<PlanetStageProps> = ({
       <div className="planet-atmosphere-glow" />
 
       {/* Orbital trajectory rings */}
-      <div className="orbit-track-ring" />
-      <div className="orbit-track-dashed" />
-
-      {/* Apex Astronaut Targeting HUD Beacon */}
-      {/* <div className="apex-target-beacon">
-        <div className="beacon-pulse" />
-        <div className="beacon-ring" />
-        <div className="beacon-crosshair">
-          <span className="crosshair-h" />
-          <span className="crosshair-v" />
-        </div>
-        <div className="beacon-tag">
-          <span className="beacon-dot" />
-          <span className="beacon-text">{currentSection.badge}</span>
-        </div>
-      </div> */}
+      {/* <div className="orbit-track-ring" />
+      <div className="orbit-track-dashed" /> */}
 
       {/* The Anchored Rotating Planet */}
       <div
