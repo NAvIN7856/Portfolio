@@ -4,7 +4,6 @@ import { PlanetStage } from './components/PlanetStage';
 import { ContentPanel } from './components/ContentPanel';
 import { CosmicHeader } from './components/CosmicHeader';
 import { SectorDial } from './components/SectorDial';
-import { SECTIONS } from './data/portfolioData';
 import { cosmicAudio } from './utils/audio';
 
 const SECTION_IDS = [
