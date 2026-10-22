@@ -4,19 +4,21 @@ import {
   Send,
   Cpu,
   CheckCircle2,
-  ArrowDown,
-  ArrowUp,
-  Zap,
-  Compass,
   Code2,
   Briefcase,
   Sparkles,
   Mail,
   FolderGit2,
+  Zap,
+  MapPin,
+  Clock,
+  Layers,
+  Terminal,
+  ShieldCheck,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { SkillIcon } from './SkillIcon';
 import {
-  SECTIONS,
   PROJECTS,
   SKILL_CATEGORIES,
   EXPERIENCES,
@@ -24,67 +26,12 @@ import {
 } from '../data/portfolioData';
 
 interface ContentPanelProps {
-  activeSectorIndex: number;
-  isRotating?: boolean;
-  targetSectorIndex?: number;
-  onNavigate: (index: number) => void;
-  cardRef?: React.Ref<HTMLDivElement>;
+  onNavigateSection?: (index: number) => void;
 }
 
-/** Scroll cue that also works from the keyboard. */
-const ScrollCue: React.FC<{
-  direction: 'up' | 'down' | 'none';
-  label: string;
-  onActivate?: () => void;
-  className?: string;
-}> = ({ direction, label, onActivate, className = '' }) => {
-  if (direction === 'none') {
-    return (
-      <div className={`section-scroll-cue end-cue ${className}`}>
-        <span className="cue-dot" />
-        <span className="cue-text">{label}</span>
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={`section-scroll-cue ${direction === 'up' ? 'top-cue' : ''} ${className}`}
-      role="button"
-      tabIndex={0}
-      onClick={onActivate}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onActivate?.();
-        }
-      }}
-    >
-      {direction === 'up' ? (
-        <ArrowUp size={14} className="cue-arrow-bounce" />
-      ) : (
-        <span className="cue-dot" />
-      )}
-      <span className="cue-text">{label}</span>
-      {direction === 'down' && <ArrowDown size={14} className="cue-arrow-bounce" />}
-    </div>
-  );
-};
-
-export const ContentPanel: React.FC<ContentPanelProps> = ({
-  activeSectorIndex,
-  isRotating = false,
-  targetSectorIndex = 0,
-  onNavigate,
-  cardRef,
-}) => {
-  const currentSection = SECTIONS[activeSectorIndex];
-  const targetSection = SECTIONS[targetSectorIndex] || currentSection;
-  const [activeProjectTab, setActiveProjectTab] = useState(0);
+export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection }) => {
   const [formSent, setFormSent] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-
-  const activeProject = PROJECTS[activeProjectTab];
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,219 +51,258 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({
     }, 4000);
   };
 
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
-    <main className="content-fullscreen-stage" aria-live="polite">
-      <div
-        ref={cardRef}
-        className={`content-fullscreen-viewport sector-view-${activeSectorIndex} ${isRotating ? 'content-transit-active' : ''
-          }`}
-      >
-        {/* Top status strip */}
+    <main className="content-scroll-flow">
+      {/* ── 01 · INFORMATION (HERO) ─────────────────────────────────────── */}
+      <section id="section-information" className="scroll-page-section category-information">
         <div className="section-meta-header">
           <div className="category-indicator-pill">
             <span className="pill-dot" />
-            <span className="pill-title">
-              {isRotating
-                ? `ORBIT TRANSIT // CATEGORY 0${targetSectorIndex + 1}`
-                : currentSection.badge}
-            </span>
+            <span className="pill-title">SECTOR 01 // INFORMATION</span>
           </div>
           <div className="astronaut-crew-tag">
             <span className="crew-dot" />
-            <span className="crew-desc">
-              {isRotating
-                ? `Moving to ${targetSection.astronautDescription}`
-                : currentSection.astronautDescription}
-            </span>
+            <span className="crew-desc">Commander — Mission Control</span>
           </div>
         </div>
 
-        {/* Transit overlay while the globe rotates */}
-        {isRotating && (
-          <div className="fullscreen-transit-banner">
-            <div className="transit-hud-glass">
-              <div className="transit-beacon-ring">
-                <Compass className="transit-compass-spin text-cyan" size={32} />
-              </div>
-              <div className="transit-details">
-                <span className="transit-badge-tag">ORBITAL ROTATION IN PROGRESS</span>
-                <h2 className="transit-heading">Aligning to {targetSection.title}</h2>
-                <p className="transit-sub">
-                  Target station: {targetSection.role} · Astronaut 0{targetSectorIndex + 1}
-                </p>
-                <div className="transit-pulse-bar">
-                  <div className="transit-pulse-fill" />
-                </div>
-              </div>
+        <div className="info-hero-grid">
+          <div className="info-main-content hud-surface">
+            <div className="hud-corner top-left" />
+            <div className="hud-corner top-right" />
+            <div className="hud-corner bottom-left" />
+            <div className="hud-corner bottom-right" />
+
+            <div className="hero-callout-tag">
+              <Sparkles size={14} className="text-cyan" />
+              <span>ORBITAL TELEMETRY ONLINE · CANDIDATE DOSSIER</span>
+            </div>
+
+            <h1 className="hero-display-name">
+              {PROFILE.name} <span className="name-last">{PROFILE.surname}</span>
+            </h1>
+
+            <p className="hero-role-lead">{PROFILE.headline}</p>
+            <p className="hero-narrative">{PROFILE.lead}</p>
+
+            <div className="hero-action-buttons">
+              <button
+                type="button"
+                className="btn-action-primary"
+                onClick={() => scrollTo('section-projects')}
+              >
+                <FolderGit2 size={16} />
+                <span>Explore Projects</span>
+              </button>
+              <button
+                type="button"
+                className="btn-action-secondary"
+                onClick={() => scrollTo('section-skills')}
+              >
+                <Code2 size={16} />
+                <span>Tech Stack</span>
+              </button>
+              <button
+                type="button"
+                className="btn-action-secondary"
+                onClick={() => scrollTo('section-experience')}
+              >
+                <Briefcase size={16} />
+                <span>Flight Log</span>
+              </button>
             </div>
           </div>
-        )}
 
-        {/* ── 01 · INFORMATION ─────────────────────────────────────── */}
-        {!isRotating && activeSectorIndex === 0 && (
-          <div className="category-panel category-information">
-            <div className="info-hero-grid">
-              <div className="info-main-content hud-surface">
-                <div className="hero-callout-tag">
-                  <Sparkles size={14} className="text-cyan" />
-                  <span>Systems online · personal dossier</span>
+          {/* Recruiter Quick Spec Dossier Card */}
+          <aside className="hero-spec-card hud-surface">
+            <div className="hud-corner top-left" />
+            <div className="hud-corner top-right" />
+            <div className="hud-corner bottom-left" />
+            <div className="hud-corner bottom-right" />
+
+            <div className="spec-card-header">
+              <Terminal size={16} className="text-cyan" />
+              <span className="spec-card-title">MISSION SPECIFICATIONS</span>
+            </div>
+
+            <div className="spec-items-list">
+              <div className="spec-row">
+                <span className="spec-label">
+                  <MapPin size={13} className="text-cyan" /> LOCATION
+                </span>
+                <span className="spec-val">Bengaluru, India / Remote</span>
+              </div>
+              <div className="spec-row">
+                <span className="spec-label">
+                  <Clock size={13} className="text-cyan" /> STATUS
+                </span>
+                <span className="spec-val status-available">
+                  <span className="avail-dot" /> Open to Opportunities
+                </span>
+              </div>
+              <div className="spec-row">
+                <span className="spec-label">
+                  <Layers size={13} className="text-cyan" /> FOCUS
+                </span>
+                <span className="spec-val">Full-Stack & Systems Dev</span>
+              </div>
+              <div className="spec-row">
+                <span className="spec-label">
+                  <ShieldCheck size={13} className="text-cyan" /> SPECIALTY
+                </span>
+                <span className="spec-val">React, Node, TypeScript, Cloud</span>
+              </div>
+            </div>
+
+            <div className="spec-card-footer">
+              <a
+                href={`mailto:${PROFILE.email}`}
+                className="btn-spec-contact"
+              >
+                <Mail size={14} />
+                <span>Transmit Inquiry</span>
+              </a>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      {/* ── 02 · SKILLS ──────────────────────────────────────────── */}
+      <section id="section-skills" className="scroll-page-section category-skills">
+        <div className="section-meta-header">
+          <div className="category-indicator-pill">
+            <span className="pill-dot" />
+            <span className="pill-title">SECTOR 02 // SKILLS</span>
+          </div>
+          <div className="astronaut-crew-tag">
+            <span className="crew-dot" />
+            <span className="crew-desc">Flight Engineer — Systems Check</span>
+          </div>
+        </div>
+
+        <div className="section-header-block">
+          <h2 className="section-display-title">Technical Avionics</h2>
+          <p className="section-display-subtitle">
+            Core technologies, runtime environments, and engineering toolsets
+          </p>
+        </div>
+
+        <div className="skills-three-column-grid">
+          {SKILL_CATEGORIES.map((cat) => (
+            <div key={cat.title} className="skill-category-solid-card hud-surface">
+              <div className="hud-corner top-left" />
+              <div className="hud-corner top-right" />
+              <div className="hud-corner bottom-left" />
+              <div className="hud-corner bottom-right" />
+
+              <div className="skill-cat-header-row">
+                <div className="cat-icon-chip">
+                  <Cpu size={18} className="text-cyan" />
                 </div>
+                <div>
+                  <h3 className="skill-cat-title">{cat.title}</h3>
+                  <span className="skill-cat-count">{cat.skills.length} MODULES READY</span>
+                </div>
+              </div>
 
-                <h1 className="hero-display-name">
-                  {PROFILE.name}
-                  <span className="name-last">{PROFILE.surname}</span>
-                </h1>
-
-                <p className="hero-role-lead">{PROFILE.headline}</p>
-                <p className="hero-narrative">{PROFILE.lead}</p>
-
-                <div className="hero-readout">
-                  {/* {PROFILE.readout.map((row) => (
-                    <div key={row.label} className="readout-row">
-                      <span className="readout-label">{row.label}</span>
-                      <span>
-                        <span className="readout-value">{row.value}</span>
-                        <span className="readout-note">{row.note}</span>
-                      </span>
+              <div className="skills-badge-grid">
+                {cat.skills.map((sk) => (
+                  <div key={sk.name} className="skill-badge-card" title={sk.name}>
+                    <div className="skill-icon-wrapper">
+                      <SkillIcon name={sk.name} size={22} />
                     </div>
-                  ))} */}
-                </div>
-
-                <div className="hero-action-buttons">
-                  <button type="button" className="btn-action-primary" onClick={() => onNavigate(1)}>
-                    <Code2 size={16} />
-                    <span>See what I work with</span>
-                  </button>
-                  <button type="button" className="btn-action-secondary" onClick={() => onNavigate(2)}>
-                    <FolderGit2 size={16} />
-                    <span>Browse projects</span>
-                  </button>
-                  <button type="button" className="btn-action-secondary" onClick={() => onNavigate(3)}>
-                    <Briefcase size={16} />
-                    <span>Read the flight log</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <ScrollCue
-              direction="down"
-              label="Scroll to rotate the globe to my skills"
-              onActivate={() => onNavigate(1)}
-            />
-          </div>
-        )}
-
-        {/* ── 02 · SKILLS ──────────────────────────────────────────── */}
-        {!isRotating && activeSectorIndex === 1 && (
-          <div className="category-panel category-skills">
-            <ScrollCue
-              direction="up"
-              label="Back to information"
-              onActivate={() => onNavigate(0)}
-            />
-
-            <div className="section-header-block">
-              <h2 className="section-display-title">{currentSection.title}</h2>
-              <p className="section-display-subtitle">
-                The stack I reach for, and what I have actually built with each piece
-              </p>
-            </div>
-
-            <div className="skills-three-column-grid scroll-region">
-              {SKILL_CATEGORIES.map((cat) => (
-                <div key={cat.title} className="skill-category-solid-card">
-                  <div className="skill-cat-header-row">
-                    <Cpu size={18} className="text-cyan" />
-                    <h3 className="skill-cat-title">{cat.title}</h3>
+                    <span className="skill-badge-name">{sk.name}</span>
                   </div>
-                  {/* <p className="skill-cat-caption">{cat.caption}</p> */}
-
-                  <div className="skill-items-list">
-                    {cat.skills.map((sk) => (
-                      <div key={sk.name} className="skill-item-row">
-                        <div className="skill-info-top">
-                          <span className="skill-item-name">{sk.name}</span>
-                          <span className="skill-item-level">{sk.level}</span>
-                        </div>
-                        <div
-                          className="skill-progress-track"
-                          role="meter"
-                          aria-valuenow={sk.level}
-                          aria-valuemin={0}
-                          aria-valuemax={100}
-                          aria-label={`${sk.name} confidence`}
-                        >
-                          <div className="skill-progress-fill" style={{ width: `${sk.level}%` }} />
-                        </div>
-                        <span className="skill-item-note">{sk.note}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <ScrollCue
-              direction="down"
-              label="Scroll to rotate the globe to my projects"
-              onActivate={() => onNavigate(2)}
-            />
-          </div>
-        )}
-
-        {/* ── 03 · PROJECTS ────────────────────────────────────────── */}
-        {!isRotating && activeSectorIndex === 2 && (
-          <div className="category-panel category-projects">
-            <ScrollCue direction="up" label="Back to my skills" onActivate={() => onNavigate(1)} />
-
-            <div className="projects-top-header">
-              <div className="section-header-block">
-                <h2 className="section-display-title">{currentSection.title}</h2>
-                <p className="section-display-subtitle">
-                  Five builds, each picked for the part that was hard
-                </p>
-              </div>
-
-              <div className="project-tabs-row" role="tablist" aria-label="Projects">
-                {PROJECTS.map((p, idx) => (
-                  <button
-                    key={p.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={activeProjectTab === idx}
-                    className={`proj-tab-button ${activeProjectTab === idx ? 'tab-selected' : ''}`}
-                    onClick={() => setActiveProjectTab(idx)}
-                  >
-                    <span className="tab-idx">0{idx + 1}</span>
-                    <span className="tab-name">{p.title}</span>
-                  </button>
                 ))}
               </div>
             </div>
+          ))}
+        </div>
+      </section>
 
-            {activeProject && (
-              <div className="project-feature-solid-card scroll-region">
-                <div className="proj-meta-ribbon">
-                  <span className="proj-category-pill">{activeProject.category}</span>
-                  <span className="proj-metrics-pill">
-                    <Zap size={14} className="text-solar" />
-                    {activeProject.metrics}
-                  </span>
-                </div>
+      {/* ── 03 · PROJECTS ────────────────────────────────────────── */}
+      <section id="section-projects" className="scroll-page-section category-projects">
+        <div className="section-meta-header">
+          <div className="category-indicator-pill">
+            <span className="pill-dot" />
+            <span className="pill-title">SECTOR 03 // PROJECTS</span>
+          </div>
+          <div className="astronaut-crew-tag">
+            <span className="crew-dot" />
+            <span className="crew-desc">Payload Specialist — Cargo Manifest</span>
+          </div>
+        </div>
 
-                <h3 className="proj-big-title">{activeProject.title}</h3>
+        <div className="projects-top-header">
+          <div className="section-header-block">
+            <h2 className="section-display-title">Payload Manifest</h2>
+            <p className="section-display-subtitle">
+              Engineered software products, scalable backends, and complex interactive applications
+            </p>
+          </div>
 
+          {/* Quick jump tabs for projects */}
+          <div className="project-tabs-row" role="navigation" aria-label="Project Jump Links">
+            {PROJECTS.map((p, idx) => (
+              <button
+                key={p.id}
+                type="button"
+                className="proj-tab-button"
+                onClick={() => scrollTo(`project-${p.id}`)}
+              >
+                <span className="tab-idx">0{idx + 1}</span>
+                <span className="tab-name">{p.title}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* List of projects rendered as high-impact dossiers */}
+        <div className="projects-list-stack">
+          {PROJECTS.map((p, idx) => (
+            <div
+              key={p.id}
+              id={`project-${p.id}`}
+              className="project-feature-solid-card hud-surface project-card-item"
+            >
+              <div className="hud-corner top-left" />
+              <div className="hud-corner top-right" />
+              <div className="hud-corner bottom-left" />
+              <div className="hud-corner bottom-right" />
+
+              <div className="proj-meta-ribbon">
+                <span className="proj-idx-badge">PAYLOAD 0{idx + 1}</span>
+                <span className="proj-category-pill">{p.category}</span>
+                <span className="proj-metrics-pill">
+                  <Zap size={14} className="text-solar" />
+                  {p.metrics}
+                </span>
+              </div>
+
+              <div className="proj-content-split">
                 <div className="proj-body-column">
-                  <p className="proj-big-desc">{activeProject.description}</p>
-                  {/* <p className="proj-detail-text">{activeProject.detail}</p> */}
+                  <h3 className="proj-big-title">{p.title}</h3>
+                  <p className="proj-big-desc">{p.description}</p>
+                  {p.detail && (
+                    <div className="proj-detail-box">
+                      <span className="detail-tag">ENGINEERING HIGHLIGHT</span>
+                      <p className="proj-detail-text">{p.detail}</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="proj-side-column">
                   <div>
-                    <span className="proj-side-label">Built with</span>
+                    <span className="proj-side-label">TECH STACK</span>
                     <div className="proj-tech-tags">
-                      {activeProject.tags.map((tag) => (
+                      {p.tags.map((tag) => (
                         <span key={tag} className="tech-tag-chip">
                           {tag}
                         </span>
@@ -326,21 +312,21 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({
 
                   <div className="proj-action-links">
                     <a
-                      href={activeProject.liveUrl}
+                      href={p.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn-link-solid primary"
                     >
-                      <span>Open the live demo</span>
+                      <span>Launch Live Demo</span>
                       <ExternalLink size={15} />
                     </a>
                     <a
-                      href={activeProject.githubUrl}
+                      href={p.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="btn-link-solid secondary"
                     >
-                      <span>Read the code</span>
+                      <span>Source Code</span>
                       <svg
                         width="15"
                         height="15"
@@ -358,113 +344,126 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({
                   </div>
                 </div>
               </div>
-            )}
-
-            <ScrollCue
-              direction="down"
-              label="Scroll to rotate the globe to my work experience"
-              onActivate={() => onNavigate(3)}
-            />
-          </div>
-        )}
-
-        {/* ── 04 · EXPERIENCE ──────────────────────────────────────── */}
-        {!isRotating && activeSectorIndex === 3 && (
-          <div className="category-panel category-experience">
-            <ScrollCue direction="up" label="Back to my projects" onActivate={() => onNavigate(2)} />
-
-            <div className="section-header-block">
-              <h2 className="section-display-title">{currentSection.title}</h2>
-              <p className="section-display-subtitle">
-                Where the work has happened so far, and how to reach me
-              </p>
             </div>
+          ))}
+        </div>
+      </section>
 
-            <div className="experience-and-contact-layout">
-              <div className="experience-items-stack scroll-region">
-                {EXPERIENCES.map((exp) => (
-                  <div key={exp.role} className="experience-solid-card">
-                    <div className="exp-period-badge">{exp.period}</div>
-                    <div className="exp-details-block">
-                      <div className="exp-title-row">
-                        <h4 className="exp-role-title">{exp.role}</h4>
-                        <span className="exp-org-tag">{exp.organization}</span>
-                      </div>
-                      <p className="exp-summary-text">{exp.description}</p>
-                      <ul className="exp-bullet-points">
-                        {exp.highlights.map((h) => (
-                          <li key={h}>{h}</li>
-                        ))}
-                      </ul>
-                    </div>
+      {/* ── 04 · EXPERIENCE & CONTACT ────────────────────────────── */}
+      <section id="section-experience" className="scroll-page-section category-experience">
+        <div className="section-meta-header">
+          <div className="category-indicator-pill">
+            <span className="pill-dot" />
+            <span className="pill-title">SECTOR 04 // EXPERIENCE & UPLINK</span>
+          </div>
+          <div className="astronaut-crew-tag">
+            <span className="crew-dot" />
+            <span className="crew-desc">Mission Archivist — Flight Log</span>
+          </div>
+        </div>
+
+        <div className="section-header-block">
+          <h2 className="section-display-title">Flight Log & Uplink</h2>
+          <p className="section-display-subtitle">
+            Historical mission timeline, professional trajectory, and direct communication frequency
+          </p>
+        </div>
+
+        <div className="experience-and-contact-layout">
+          <div className="experience-items-stack">
+            {EXPERIENCES.map((exp) => (
+              <div key={exp.role} className="experience-solid-card hud-surface">
+                <div className="hud-corner top-left" />
+                <div className="hud-corner top-right" />
+                <div className="hud-corner bottom-left" />
+                <div className="hud-corner bottom-right" />
+
+                <div className="exp-period-badge">{exp.period}</div>
+                <div className="exp-details-block">
+                  <div className="exp-title-row">
+                    <h4 className="exp-role-title">{exp.role}</h4>
+                    <span className="exp-org-tag">{exp.organization}</span>
                   </div>
-                ))}
-              </div>
-
-              <div className="contact-uplink-solid-card">
-                <div className="uplink-card-header">
-                  <Mail size={18} className="text-cyan" />
-                  <h3 className="uplink-card-title">Send a transmission</h3>
+                  <p className="exp-summary-text">{exp.description}</p>
+                  <ul className="exp-bullet-points">
+                    {exp.highlights.map((h) => (
+                      <li key={h}>{h}</li>
+                    ))}
+                  </ul>
                 </div>
-                <p className="uplink-subtext">
-                  Hiring, collaborating, or just want to know how the virtualizer works? Write to me
-                  here and I will reply from {PROFILE.email}.
-                </p>
+              </div>
+            ))}
+          </div>
 
-                {formSent ? (
-                  <div className="transmission-success-box">
-                    <CheckCircle2 size={36} className="text-emerald" />
-                    <h4>Message received</h4>
-                    <p>It is in my inbox. Expect a reply within a day or two.</p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSendMessage} className="fullscreen-form">
-                    <div className="input-field-group">
-                      <label htmlFor="form-callsign">Your name</label>
-                      <input
-                        id="form-callsign"
-                        type="text"
-                        required
-                        placeholder="Alex Rivera"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      />
-                    </div>
-                    <div className="input-field-group">
-                      <label htmlFor="form-email">Where I should reply</label>
-                      <input
-                        id="form-email"
-                        type="email"
-                        required
-                        placeholder="alex@company.com"
-                        value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      />
-                    </div>
-                    <div className="input-field-group">
-                      <label htmlFor="form-payload">What you have in mind</label>
-                      <textarea
-                        id="form-payload"
-                        rows={4}
-                        required
-                        placeholder="A role, a project, a question about something on this page…"
-                        value={formData.message}
-                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      />
-                    </div>
-                    <button type="submit" className="btn-send-uplink">
-                      <Send size={14} />
-                      <span>Send message</span>
-                    </button>
-                  </form>
-                )}
+          <div className="contact-uplink-solid-card hud-surface">
+            <div className="hud-corner top-left" />
+            <div className="hud-corner top-right" />
+            <div className="hud-corner bottom-left" />
+            <div className="hud-corner bottom-right" />
+
+            <div className="uplink-card-header">
+              <div className="cat-icon-chip">
+                <Mail size={18} className="text-cyan" />
+              </div>
+              <div>
+                <h3 className="uplink-card-title">Send a Transmission</h3>
+                <span className="uplink-badge">FREQUENCY: 2.4 GHz ENCRYPTED</span>
               </div>
             </div>
+            <p className="uplink-subtext">
+              Looking to collaborate, recruit, or discuss an architecture challenge? Send a signal directly to {PROFILE.email}.
+            </p>
 
-            <ScrollCue direction="none" label="Final orbital station · end of dossier" />
+            {formSent ? (
+              <div className="transmission-success-box">
+                <CheckCircle2 size={36} className="text-emerald" />
+                <h4>Transmission Acknowledged</h4>
+                <p>Telemetry recorded in inbox. Expect a response within 24-48 standard hours.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleSendMessage} className="fullscreen-form">
+                <div className="input-field-group">
+                  <label htmlFor="form-callsign">CALLSIGN / NAME</label>
+                  <input
+                    id="form-callsign"
+                    type="text"
+                    required
+                    placeholder="Alex Rivera"
+                    value={formData.name}
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  />
+                </div>
+                <div className="input-field-group">
+                  <label htmlFor="form-email">RETURN FREQUENCY / EMAIL</label>
+                  <input
+                    id="form-email"
+                    type="email"
+                    required
+                    placeholder="alex@company.com"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  />
+                </div>
+                <div className="input-field-group">
+                  <label htmlFor="form-payload">MISSION PAYLOAD / MESSAGE</label>
+                  <textarea
+                    id="form-payload"
+                    rows={4}
+                    required
+                    placeholder="Provide mission details, technical opportunities, or collaboration proposals…"
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  />
+                </div>
+                <button type="submit" className="btn-send-uplink">
+                  <Send size={14} />
+                  <span>Broadcast Transmission</span>
+                </button>
+              </form>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      </section>
     </main>
   );
 };

@@ -1,27 +1,38 @@
-import React from 'react';
-import { Compass, ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Compass, ArrowUp, ChevronDown, ChevronUp } from 'lucide-react';
 import { SECTIONS } from '../data/portfolioData';
 
 interface SectorDialProps {
   activeSectorIndex: number;
   rotation: number;
   onSelectSector: (index: number) => void;
-  onNextSector: () => void;
-  onPrevSector: () => void;
+  scrollProgress?: number;
 }
 
 export const SectorDial: React.FC<SectorDialProps> = ({
   activeSectorIndex,
   rotation,
   onSelectSector,
-  onNextSector,
-  onPrevSector,
+  scrollProgress = 0,
 }) => {
-  // Normalize angle to 0..360
+  const [showBackToTop, setShowBackToTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowBackToTop(window.scrollY > 400);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const normalizedAngle = ((Math.abs(rotation) % 360) + 360) % 360;
 
   return (
-    <aside className="sector-dial-aside" aria-label="Orbital Position Telemetry">
+    <aside className="sector-dial-aside" aria-label="Orbital Telemetry & Radar">
       {/* Mini orbital radar compass */}
       <div className="radar-compass-wrapper">
         <div className="radar-face">
@@ -58,18 +69,27 @@ export const SectorDial: React.FC<SectorDialProps> = ({
 
         <div className="radar-readout">
           <span className="radar-degrees">{Math.round(normalizedAngle)}°</span>
-          <span className="radar-subtext">ORBITAL BEARING</span>
+          <span className="radar-subtext">ORBITAL SECTOR</span>
+        </div>
+
+        {/* Global Mission Scroll Progress Ring / Bar */}
+        <div className="telemetry-progress-wrapper" title={`Mission Travel: ${Math.round(scrollProgress * 100)}%`}>
+          <div
+            className="telemetry-progress-fill"
+            style={{ width: `${Math.round(scrollProgress * 100)}%` }}
+          />
         </div>
       </div>
 
-      {/* Manual Step Controls */}
+      {/* Orbit Steppers & Back to Top */}
       <div className="orbit-steppers">
         <button
           type="button"
           className="stepper-btn"
-          onClick={onPrevSector}
-          title="Previous Orbital Sector"
-          aria-label="Previous Orbital Sector"
+          disabled={activeSectorIndex <= 0}
+          onClick={() => onSelectSector(Math.max(0, activeSectorIndex - 1))}
+          title="Previous Sector"
+          aria-label="Previous Sector"
         >
           <ChevronUp size={16} />
         </button>
@@ -79,19 +99,27 @@ export const SectorDial: React.FC<SectorDialProps> = ({
         <button
           type="button"
           className="stepper-btn"
-          onClick={onNextSector}
-          title="Next Orbital Sector"
-          aria-label="Next Orbital Sector"
+          disabled={activeSectorIndex >= SECTIONS.length - 1}
+          onClick={() => onSelectSector(Math.min(SECTIONS.length - 1, activeSectorIndex + 1))}
+          title="Next Sector"
+          aria-label="Next Sector"
         >
           <ChevronDown size={16} />
         </button>
       </div>
 
-      {/* Scroll Prompt Notice */}
-      <div className="scroll-indicator-pill">
-        <span className="scroll-wheel-icon" />
-        <span className="scroll-text">SCROLL TO ROTATE</span>
-      </div>
+      {showBackToTop && (
+        <button
+          type="button"
+          className="back-to-top-btn"
+          onClick={scrollToTop}
+          title="Return to Orbit Origin (Top)"
+          aria-label="Return to Top"
+        >
+          <ArrowUp size={14} />
+          <span>TOP</span>
+        </button>
+      )}
     </aside>
   );
 };

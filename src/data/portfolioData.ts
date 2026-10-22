@@ -23,8 +23,6 @@ export interface Project {
 
 export interface Skill {
   name: string;
-  level: number;
-  note: string;
 }
 
 export interface SkillCategory {
@@ -84,138 +82,202 @@ export const PROFILE = {
     { label: 'Specialism', value: 'Real-time UI', note: 'Sockets, HLS sync, virtualization, motion' },
     { label: 'Status', value: 'Open to work', note: 'Internships and frontend contract work' },
   ],
-  email: 'you@example.com', // TODO
-  github: 'https://github.com/yourhandle', // TODO
-  linkedin: 'https://linkedin.com/in/yourhandle', // TODO
+  email: 'navinkrsingh2625@gmail.com',
+  github: 'https://github.com/NAvIN7856',
+  linkedin: 'https://linkedin.com/in/navin7856',
 };
 
 export const SKILL_CATEGORIES: SkillCategory[] = [
   {
-    title: 'Interface',
-    caption: 'What the user actually touches',
+    title: 'Languages',
+    caption: 'Core programming and scripting languages',
     skills: [
-      { name: 'React', level: 92, note: 'Hooks, suspense boundaries, custom virtualizers' },
-      { name: 'TypeScript', level: 85, note: 'Strict mode, generics across shared data layers' },
-      { name: 'Tailwind CSS v4 + daisyUI', level: 88, note: 'Design tokens, theming, dark-first systems' },
-      { name: 'Motion (Framer Motion)', level: 80, note: 'Shared layout transitions, scroll-linked reveals' },
-      { name: 'Three.js / WebGL', level: 62, note: 'Scene composition, orbit interaction, perf budgets' },
+      { name: 'JavaScript' },
+      { name: 'TypeScript' },
+      { name: 'Java' },
+      { name: 'Python' },
+      { name: 'HTML5' },
+      { name: 'CSS3' },
     ],
   },
   {
-    title: 'Application',
-    caption: 'State, transport and everything behind the view',
+    title: 'Frontend',
+    caption: 'Modern UI libraries, frameworks and architecture',
     skills: [
-      { name: 'Zustand', level: 86, note: 'Slice-per-feature stores, selector discipline' },
-      { name: 'TanStack Query', level: 82, note: 'Cache keys, infinite queries, optimistic writes' },
-      { name: 'Socket.IO', level: 78, note: 'Room state, playback sync, admin-gated events' },
-      { name: 'Node + Express', level: 70, note: 'REST endpoints, auth flow, media proxying' },
-      { name: 'Web Audio API', level: 65, note: 'Analyser nodes, frame-accurate visualisation' },
+      { name: 'React.js' },
+      { name: 'Vite' },
+      { name: 'Tailwind CSS' },
+      { name: 'Responsive UI' },
+      { name: 'REST API Integration' },
     ],
   },
   {
-    title: 'Foundations',
-    caption: 'Coursework that turned into working systems',
+    title: 'Backend',
+    caption: 'Server-side runtime, microframeworks and streaming',
     skills: [
-      { name: 'C / Data structures', level: 84, note: 'Shift-reduce parsers, LR(0) item sets' },
-      { name: 'Compiler design', level: 75, note: 'Code generation for procedure calls' },
-      { name: 'Python / data science', level: 72, note: 'Dataset cleaning, classification dashboards' },
-      { name: 'SDN · Mininet · Open vSwitch', level: 68, note: 'QoS configuration, iPerf benchmarking' },
-      { name: 'Git + Vite tooling', level: 88, note: 'Branch hygiene, build config, CI-ready repos' },
+      { name: 'Node.js' },
+      { name: 'Flask' },
+      { name: 'FastAPI' },
+      { name: 'RESTful APIs' },
+      { name: 'WebSockets' },
+    ],
+  },
+  {
+    title: 'AI/ML',
+    caption: 'Deep learning, neural networks and computer vision',
+    skills: [
+      { name: 'Computer Vision' },
+      { name: 'PyTorch' },
+      { name: 'TensorFlow' },
+      { name: 'YOLO' },
+      { name: 'OpenCV' },
+    ],
+  },
+  {
+    title: '3D & Visualization',
+    caption: 'Interactive spatial canvas, shaders and graph structures',
+    skills: [
+      { name: 'Three.js' },
+      { name: 'React Three Fiber' },
+      { name: 'WebGL' },
+      { name: 'GLSL' },
+      { name: 'Graph & Network Visualization' },
+    ],
+  },
+  {
+    title: 'Database & DevOps',
+    caption: 'Data storage, containerization and CI/CD automation',
+    skills: [
+      { name: 'MongoDB' },
+      { name: 'Git' },
+      { name: 'GitHub' },
+      { name: 'Docker' },
+      { name: 'GitHub Actions' },
     ],
   },
 ];
+
 
 export const PROJECTS: Project[] = [
   {
-    id: 'watch-party',
-    title: 'Watch Party',
-    category: 'Real-time video',
-    metrics: 'Socket-synced playback',
+    id: '3d-graph-world',
+    title: '3D Graph World',
+    category: '3D / Interactive Web',
+    metrics: 'Interactive 3D environment',
     description:
-      'A room-based watch-party app where everyone stays on the same frame. HLS and YouTube sources are kept in sync over sockets, with drift correction on join and on seek.',
+      'An experimental 3D web project that explores representing graph structures and relationships inside an interactive spatial environment.',
     detail:
-      'The native YouTube chrome was replaced with a custom player so host controls could be gated — only the room admin can play, pause or seek, and every other client follows.',
-    tags: ['React', 'TypeScript', 'Socket.IO', 'HLS.js', 'YouTube IFrame API'],
+      'The project focuses on moving beyond conventional 2D interfaces by presenting information as an explorable 3D world. It demonstrates TypeScript-based development, spatial interaction, visual hierarchy, and the challenges of creating interfaces that users can navigate rather than simply scroll through.',
+    tags: ['TypeScript', '3D', 'Graph Visualization', 'Interactive UI'],
     liveUrl: '#',
-    githubUrl: '#',
+    githubUrl: 'https://github.com/NAvIN7856/3D-Graph-World',
   },
+
   {
-    id: 'cinesphere',
-    title: 'CineSphere',
-    category: 'Social platform',
-    metrics: 'Feature-first architecture',
+    id: 'distributed-rate-limiter',
+    title: 'Distributed Rate Limiter',
+    category: 'Systems / Backend',
+    metrics: 'Distributed request control',
     description:
-      'A social movie platform for logging what you watched and seeing what everyone else thought. Built feature-first so each domain owns its own routes, store slice and queries.',
+      'A rate-limiting system designed to control request frequency across distributed application instances.',
     detail:
-      'Server state lives in TanStack Query, client state in Zustand, and the whole surface is themed through Tailwind v4 tokens with daisyUI v5.',
-    tags: ['Vite', 'React', 'Tailwind v4', 'daisyUI v5', 'Zustand', 'TanStack Query'],
+      'The project explores one of the fundamental problems in backend systems: preventing clients from overwhelming an application while maintaining consistent request limits across multiple instances. It demonstrates practical understanding of request control, distributed application behavior, and backend system design.',
+    tags: ['JavaScript', 'Distributed Systems', 'Rate Limiting', 'Backend'],
     liveUrl: '#',
-    githubUrl: '#',
+    githubUrl: 'https://github.com/NAvIN7856/Distributed-Rate-Limiter',
   },
+
   {
-    id: 'chat-virtualizer',
-    title: 'Chat + custom virtualizer',
-    category: 'Performance',
-    metrics: 'Variable-height row virtualization',
+    id: 'voice-match-ai',
+    title: 'Voice Match AI',
+    category: 'AI / Voice',
+    metrics: 'AI-powered voice matching',
     description:
-      'A chat client built on a hand-written useVirtualizer hook for variable-height messages — the part off-the-shelf libraries handle worst.',
+      'An experimental AI application focused on analyzing and matching voice characteristics using a web-based interface.',
     detail:
-      'It keeps the view pinned to the newest message, preserves the scroll anchor when older pages are prepended, and paginates infinitely upward without a visible jump. Sticky date separators ride the scroll position.',
-    tags: ['React', 'Virtualization', 'Infinite scroll', 'IntersectionObserver'],
+      'Voice Match AI explores the intersection of artificial intelligence, audio processing, and interactive web applications. The project demonstrates an interest in building AI systems that interact with users through voice rather than relying exclusively on conventional text-based interfaces.',
+    tags: ['JavaScript', 'AI', 'Voice', 'Audio Processing'],
     liveUrl: '#',
-    githubUrl: '#',
+    githubUrl: 'https://github.com/NAvIN7856/Voice-Match-AI',
   },
+
   {
-    id: 'movieverse',
-    title: 'MovieVerse',
-    category: 'Interface study',
-    metrics: 'Motion + glass UI',
+    id: 'thyroid-disease-prediction',
+    title: 'Thyroid Disease Prediction',
+    category: 'Machine Learning',
+    metrics: 'ML prediction + web application',
     description:
-      'A film-logging app used as a testbed for layout animation: shared-element transitions between a grid and a detail panel, and a scroll-to-thoughts interaction on each title.',
+      'A machine-learning application for predicting thyroid disease from medical dataset features through a web-based interface.',
     detail:
-      'Runs on mock data and context providers so the interface work stays the focus.',
-    tags: ['React', 'Motion', 'Context API', 'Glassmorphism'],
+      'The project combines machine learning with application development. A trained prediction model is exposed through a Flask-based backend and presented through a modern frontend built with React and Tailwind CSS, turning a machine-learning experiment into an interactive application.',
+    tags: [
+      'Python',
+      'Machine Learning',
+      'Flask',
+      'React',
+      'Tailwind CSS',
+    ],
     liveUrl: '#',
-    githubUrl: '#',
+    githubUrl:
+      'https://github.com/NAvIN7856/Thyroid-Disease-Prediction',
   },
+
   {
-    id: 'sdn-networks',
-    title: 'SDN network lab',
-    category: 'Networks',
-    metrics: 'Mininet + Open vSwitch',
+    id: 'spatial-room',
+    title: 'Spatial Room',
+    category: 'Interactive Web',
+    metrics: 'Spatial browser experience',
     description:
-      'Two software-defined networking builds: an airport network management case study and a smart-ambulance traffic priority system.',
+      'An experimental JavaScript project that explores representing an interactive room or environment inside the browser.',
     detail:
-      'Topologies modelled in Mininet on Open vSwitch, QoS queues configured for priority traffic, and throughput verified with iPerf across before-and-after runs.',
-    tags: ['Mininet', 'Open vSwitch', 'QoS', 'iPerf', 'Ubuntu'],
+      'Spatial Room focuses on creating a more environmental style of interaction instead of presenting content as a traditional collection of cards and pages. The project contributes to the broader design direction of building portfolio and web experiences around spaces, movement, and exploration.',
+    tags: ['JavaScript', 'Interactive UI', 'Spatial Design', 'Web'],
     liveUrl: '#',
-    githubUrl: '#',
+    githubUrl: 'https://github.com/NAvIN7856/Spatial-Room',
+  },
+
+  {
+    id: 'garbage-detector',
+    title: 'Garbage Detector',
+    category: 'AI / Detection',
+    metrics: 'Automated waste detection',
+    description:
+      'An AI-oriented project focused on detecting garbage or waste through automated visual recognition.',
+    detail:
+      'The project applies computer-vision concepts to an environmental problem. Its goal is to explore how automated detection can identify waste and potentially support smarter waste-management workflows.',
+    tags: ['AI', 'Computer Vision', 'Detection', 'Environment'],
+    liveUrl: '#',
+    githubUrl: 'https://github.com/NAvIN7856/Garbage-Detector',
   },
 ];
 
+
 export const EXPERIENCES: Experience[] = [
   {
-    period: 'Ongoing',
-    role: 'Frontend developer — independent projects',
-    organization: 'Self-directed',
+    period: '2024 — Present',
+    role: 'Independent Developer',
+    organization: 'Personal Projects',
     description:
-      'Designing and shipping React applications end to end, picking problems specifically for the parts that are hard to get right.',
+      'Building experimental and practical software projects across frontend development, AI, machine learning, interactive web experiences, and systems programming.',
     highlights: [
-      'Wrote a variable-height row virtualizer rather than adopting one, to control scroll anchoring',
-      'Synced HLS and YouTube playback across clients with admin-gated controls',
-      'Standardised on a feature-first structure with Zustand and TanStack Query across projects',
+      'Built interactive web experiences using JavaScript and TypeScript',
+      'Explored 3D and spatial interfaces through 3D Graph World and Spatial Room',
+      'Developed AI and machine-learning projects involving voice, disease prediction, and detection',
+      'Explored backend and distributed-system concepts through a distributed rate limiter',
     ],
   },
+
   {
-    period: 'Coursework',
-    role: 'B.Tech, Computer Science and Engineering',
+    period: 'Academic',
+    role: 'B.Tech Computer Science and Engineering',
     organization: 'SRM Institute of Science and Technology',
     description:
-      'Systems-heavy coursework across compiler design, software-defined networking and data science — each one taken past the lab sheet into a working build.',
+      'Computer Science undergraduate working across software development, machine learning, data science, and systems-oriented coursework.',
     highlights: [
-      'Compiler design: shift-reduce parsers and LR(0) item set construction in C',
-      'SDN: airport network management and ambulance priority routing on Mininet',
-      'Data science: a classification dashboard over a thyroid detection dataset',
+      'Applied machine learning to healthcare and agricultural datasets',
+      'Developed web applications using JavaScript, React, HTML, and CSS',
+      'Explored Python-based data science and machine-learning workflows',
+      'Built independent projects beyond standard coursework to explore new technologies',
     ],
   },
 ];

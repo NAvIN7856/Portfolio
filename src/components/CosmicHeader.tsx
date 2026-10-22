@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Volume2, VolumeX, Compass, Radio, Terminal, Sparkles, ExternalLink } from 'lucide-react';
-import { SECTIONS } from '../data/portfolioData';
+import { Volume2, VolumeX, Compass, Sparkles, ExternalLink, FileText, Radio } from 'lucide-react';
+import { SECTIONS, PROFILE } from '../data/portfolioData';
+import { SkillIcon } from './SkillIcon';
 
 interface CosmicHeaderProps {
   activeSectorIndex: number;
@@ -30,18 +31,20 @@ export const CosmicHeader: React.FC<CosmicHeaderProps> = ({
     return () => clearInterval(interval);
   }, []);
 
+  const navLabels = ['01 ABOUT', '02 SKILLS', '03 PROJECTS', '04 EXPERIENCE'];
+
   return (
-    <header className="cosmic-header">
+    <header className="cosmic-header" role="banner" aria-label="Flight Deck Navigation">
       {/* Brand & Mission Status */}
       <div className="header-brand-group">
-        <div className="status-indicator">
+        <div className="status-indicator" title="Orbital Uplink Active">
           <span className="status-beacon" />
           <span className="status-ping" />
         </div>
         <div className="brand-titles">
           <div className="brand-logo">
-            <span className="brand-name">NAVIN</span>
-            <span className="brand-tag">MISSION ORBITAL</span>
+            <span className="brand-name">{PROFILE.name.toUpperCase()}</span>
+            <span className="brand-tag">ORBITAL DOSSIER</span>
           </div>
           <div className="brand-telemetry">
             <span className="telemetry-item">{missionTime}</span>
@@ -59,7 +62,6 @@ export const CosmicHeader: React.FC<CosmicHeaderProps> = ({
       <nav className="header-nav" aria-label="Orbital Sector Navigation">
         {SECTIONS.map((sec, idx) => {
           const isActive = activeSectorIndex === idx;
-          const labels = ['MISSION', 'EXPEDITION', 'PAYLOADS', 'SIGNAL'];
           return (
             <button
               key={sec.id}
@@ -68,38 +70,39 @@ export const CosmicHeader: React.FC<CosmicHeaderProps> = ({
               onClick={() => onSelectSector(idx)}
               aria-current={isActive ? 'page' : undefined}
             >
-              <span className="nav-index">0{idx + 1}</span>
-              <span className="nav-label">{labels[idx]}</span>
+              <span className="nav-label">{navLabels[idx]}</span>
               {isActive && <span className="nav-glow-underline" />}
             </button>
           );
         })}
       </nav>
 
-      {/* Action Controls & Sound */}
+      {/* Action Controls*/}
       <div className="header-actions">
-        <button
-          type="button"
-          className={`sound-toggle-btn ${soundEnabled ? 'sound-active' : ''}`}
-          onClick={onToggleSound}
-          title={soundEnabled ? 'Mute Atmospheric Audio' : 'Enable Space Audio'}
-          aria-label="Toggle Cosmic Audio"
-        >
-          {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
-          <span className="sound-status-label">{soundEnabled ? 'AUDIO ON' : 'AUDIO OFF'}</span>
-        </button>
-
         <a
-          href="https://github.com"
+          href={PROFILE.linkedin}
           target="_blank"
           rel="noopener noreferrer"
-          className="header-link-btn"
-          title="Open GitHub Profile"
+          className="header-link-btn primary-uplink"
+          title="LinkedIn Profile"
         >
-          <span>GITHUB</span>
-          <ExternalLink size={13} />
+          <SkillIcon name="linkedin" size={13} />
+          <span>LINKEDIN</span>
         </a>
+
+        <a
+          href={PROFILE.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="header-link-btn primary-uplink"
+          title="GitHub Profile"
+        >
+          <SkillIcon name="github" size={13} />
+          <span>GITHUB</span>
+        </a>
+
       </div>
     </header>
   );
 };
+

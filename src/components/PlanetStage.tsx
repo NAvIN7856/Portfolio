@@ -14,16 +14,11 @@ export const PlanetStage: React.FC<PlanetStageProps> = ({
   isRotating = false,
   onSelectSector,
 }) => {
-  const currentSection = SECTIONS[activeSectorIndex];
-
   return (
     <div className="planet-stage-container" aria-label="Interactive Planetary Stage">
       {/* Planetary atmospheric corona / horizon aura */}
       <div className="planet-atmosphere-glow" />
-
-      {/* Orbital trajectory rings */}
-      {/* <div className="orbit-track-ring" />
-      <div className="orbit-track-dashed" /> */}
+      <div className="planet-ionosphere-ring" />
 
       {/* The Anchored Rotating Planet */}
       <div
@@ -41,32 +36,29 @@ export const PlanetStage: React.FC<PlanetStageProps> = ({
 
         {/* 4 Interactive click hotspots positioned on the 4 astronauts */}
         {SECTIONS.map((sec, idx) => {
-          // Angular positions on the original PNG:
-          // Sector 0 (Laptop) is at 12 o'clock (angle 0 rad, top)
-          // Sector 1 (Tablet) is at 3 o'clock (angle PI/2, right)
-          // Sector 2 (Coin) is at 6 o'clock (angle PI, bottom)
-          // Sector 3 (Spacewalk) is at 9 o'clock (angle 3PI/2, left)
           const angleDeg = idx * 90;
+          const isActive = activeSectorIndex === idx;
           return (
             <button
               key={sec.id}
               type="button"
-              className={`astronaut-hotspot hotspot-${idx} ${activeSectorIndex === idx ? 'hotspot-active' : ''
-                }`}
+              className={`astronaut-hotspot hotspot-${idx} ${
+                isActive ? 'hotspot-active' : ''
+              }`}
               style={{
                 transform: `rotate(${angleDeg}deg) translateY(-48%)`,
               }}
               onClick={() => onSelectSector(idx)}
-              title={`Rotate to ${sec.title}`}
-              aria-label={`Jump to ${sec.title}`}
+              title={`Jump to Sector 0${idx + 1}: ${sec.title}`}
+              aria-label={`Jump to Sector 0${idx + 1}: ${sec.title}`}
             >
               <span
                 className="hotspot-pin"
                 style={{
-                  // Counter-rotate the label so it stays legible regardless of planet rotation
                   transform: `rotate(-${angleDeg + rotation}deg)`,
                 }}
               >
+                <span className="hotspot-pulse" />
                 <span className="hotspot-num">0{idx + 1}</span>
               </span>
             </button>
@@ -79,3 +71,4 @@ export const PlanetStage: React.FC<PlanetStageProps> = ({
     </div>
   );
 };
+
