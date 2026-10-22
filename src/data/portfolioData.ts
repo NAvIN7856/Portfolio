@@ -16,6 +16,7 @@ export interface Project {
   metrics: string;
   description: string;
   detail: string;
+  features: string[];
   tags: string[];
   liveUrl: string;
   githubUrl: string;
@@ -159,96 +160,103 @@ export const SKILL_CATEGORIES: SkillCategory[] = [
 
 
 export const PROJECTS: Project[] = [
-  {
-    id: '3d-graph-world',
-    title: '3D Graph World',
-    category: '3D / Interactive Web',
-    metrics: 'Interactive 3D environment',
-    description:
-      'An experimental 3D web project that explores representing graph structures and relationships inside an interactive spatial environment.',
-    detail:
-      'The project focuses on moving beyond conventional 2D interfaces by presenting information as an explorable 3D world. It demonstrates TypeScript-based development, spatial interaction, visual hierarchy, and the challenges of creating interfaces that users can navigate rather than simply scroll through.',
-    tags: ['TypeScript', '3D', 'Graph Visualization', 'Interactive UI'],
-    liveUrl: '#',
-    githubUrl: 'https://github.com/NAvIN7856/3D-Graph-World',
-  },
+  // {
+  //   id: '3d-graph-world',
+  //   title: '3D Graph World',
+  //   category: '3D / Interactive Web',
+  //   metrics: 'Interactive 3D environment',
+  //   description:
+  //     'An experimental 3D web project that explores representing graph structures and relationships inside an interactive spatial environment.',
+  //   detail:
+  //     'The project focuses on moving beyond conventional 2D interfaces by presenting information as an explorable 3D world. It demonstrates TypeScript-based development, spatial interaction, visual hierarchy, and the challenges of creating interfaces that users can navigate rather than simply scroll through.',
+  //   tags: ['TypeScript', '3D', 'Graph Visualization', 'Interactive UI'],
+  //   liveUrl: '#',
+  //   githubUrl: 'https://github.com/NAvIN7856/3D-Graph-World',
+  // },
 
   {
     id: 'distributed-rate-limiter',
-    title: 'Distributed Rate Limiter',
+    title: 'Distributed Rate Limiter & Observability Dashboard',
     category: 'Systems / Backend',
-    metrics: 'Distributed request control',
+    metrics: 'Zero-Race-Condition Atomic Throttling',
     description:
-      'A rate-limiting system designed to control request frequency across distributed application instances.',
+      'A distributed rate limiter and live observability dashboard ensuring request control across distributed servers with atomic Redis Lua scripts.',
     detail:
-      'The project explores one of the fundamental problems in backend systems: preventing clients from overwhelming an application while maintaining consistent request limits across multiple instances. It demonstrates practical understanding of request control, distributed application behavior, and backend system design.',
-    tags: ['JavaScript', 'Distributed Systems', 'Rate Limiting', 'Backend'],
-    liveUrl: '#',
+      'Solves the distributed concurrency challenge by executing rate limit evaluations atomically directly in Redis engine memory via custom Lua scripts. Accompanied by full Prometheus metrics instrumentation and a reactive control plane to simulate burst traffic and inspect real-time system health.',
+    features: [
+      'Atomic sliding-window algorithm executed via Lua scripts in Redis to prevent race conditions',
+      'Flexible strategy engine supporting IP, User ID, API Key, and Role-based rate limiting',
+      'Prometheus instrumentation tracking allowed vs. blocked (429) requests and response time histograms',
+      'Live interactive telemetry dashboard with a real-time burst traffic simulator and route rule inspector',
+    ],
+    tags: ['Node.js', 'Redis', 'Lua', 'React', 'Prometheus', 'Distributed Systems'],
+    liveUrl: 'https://distributed-rate-limiter-ruddy.vercel.app',
     githubUrl: 'https://github.com/NAvIN7856/Distributed-Rate-Limiter',
   },
 
-  {
-    id: 'voice-match-ai',
-    title: 'Voice Match AI',
-    category: 'AI / Voice',
-    metrics: 'AI-powered voice matching',
-    description:
-      'An experimental AI application focused on analyzing and matching voice characteristics using a web-based interface.',
-    detail:
-      'Voice Match AI explores the intersection of artificial intelligence, audio processing, and interactive web applications. The project demonstrates an interest in building AI systems that interact with users through voice rather than relying exclusively on conventional text-based interfaces.',
-    tags: ['JavaScript', 'AI', 'Voice', 'Audio Processing'],
-    liveUrl: '#',
-    githubUrl: 'https://github.com/NAvIN7856/Voice-Match-AI',
-  },
 
-  {
-    id: 'thyroid-disease-prediction',
-    title: 'Thyroid Disease Prediction',
-    category: 'Machine Learning',
-    metrics: 'ML prediction + web application',
-    description:
-      'A machine-learning application for predicting thyroid disease from medical dataset features through a web-based interface.',
-    detail:
-      'The project combines machine learning with application development. A trained prediction model is exposed through a Flask-based backend and presented through a modern frontend built with React and Tailwind CSS, turning a machine-learning experiment into an interactive application.',
-    tags: [
-      'Python',
-      'Machine Learning',
-      'Flask',
-      'React',
-      'Tailwind CSS',
-    ],
-    liveUrl: '#',
-    githubUrl:
-      'https://github.com/NAvIN7856/Thyroid-Disease-Prediction',
-  },
+  // {
+  //   id: 'voice-match-ai',
+  //   title: 'Voice Match AI',
+  //   category: 'AI / Voice',
+  //   metrics: 'AI-powered voice matching',
+  //   description:
+  //     'An experimental AI application focused on analyzing and matching voice characteristics using a web-based interface.',
+  //   detail:
+  //     'Voice Match AI explores the intersection of artificial intelligence, audio processing, and interactive web applications. The project demonstrates an interest in building AI systems that interact with users through voice rather than relying exclusively on conventional text-based interfaces.',
+  //   tags: ['JavaScript', 'AI', 'Voice', 'Audio Processing'],
+  //   liveUrl: '#',
+  //   githubUrl: 'https://github.com/NAvIN7856/Voice-Match-AI',
+  // },
 
-  {
-    id: 'spatial-room',
-    title: 'Spatial Room',
-    category: 'Interactive Web',
-    metrics: 'Spatial browser experience',
-    description:
-      'An experimental JavaScript project that explores representing an interactive room or environment inside the browser.',
-    detail:
-      'Spatial Room focuses on creating a more environmental style of interaction instead of presenting content as a traditional collection of cards and pages. The project contributes to the broader design direction of building portfolio and web experiences around spaces, movement, and exploration.',
-    tags: ['JavaScript', 'Interactive UI', 'Spatial Design', 'Web'],
-    liveUrl: '#',
-    githubUrl: 'https://github.com/NAvIN7856/Spatial-Room',
-  },
+  // {
+  //   id: 'thyroid-disease-prediction',
+  //   title: 'Thyroid Disease Prediction',
+  //   category: 'Machine Learning',
+  //   metrics: 'ML prediction + web application',
+  //   description:
+  //     'A machine-learning application for predicting thyroid disease from medical dataset features through a web-based interface.',
+  //   detail:
+  //     'The project combines machine learning with application development. A trained prediction model is exposed through a Flask-based backend and presented through a modern frontend built with React and Tailwind CSS, turning a machine-learning experiment into an interactive application.',
+  //   tags: [
+  //     'Python',
+  //     'Machine Learning',
+  //     'Flask',
+  //     'React',
+  //     'Tailwind CSS',
+  //   ],
+  //   liveUrl: '#',
+  //   githubUrl:
+  //     'https://github.com/NAvIN7856/Thyroid-Disease-Prediction',
+  // },
 
-  {
-    id: 'garbage-detector',
-    title: 'Garbage Detector',
-    category: 'AI / Detection',
-    metrics: 'Automated waste detection',
-    description:
-      'An AI-oriented project focused on detecting garbage or waste through automated visual recognition.',
-    detail:
-      'The project applies computer-vision concepts to an environmental problem. Its goal is to explore how automated detection can identify waste and potentially support smarter waste-management workflows.',
-    tags: ['AI', 'Computer Vision', 'Detection', 'Environment'],
-    liveUrl: '#',
-    githubUrl: 'https://github.com/NAvIN7856/Garbage-Detector',
-  },
+  // {
+  //   id: 'spatial-room',
+  //   title: 'Spatial Room',
+  //   category: 'Interactive Web',
+  //   metrics: 'Spatial browser experience',
+  //   description:
+  //     'An experimental JavaScript project that explores representing an interactive room or environment inside the browser.',
+  //   detail:
+  //     'Spatial Room focuses on creating a more environmental style of interaction instead of presenting content as a traditional collection of cards and pages. The project contributes to the broader design direction of building portfolio and web experiences around spaces, movement, and exploration.',
+  //   tags: ['JavaScript', 'Interactive UI', 'Spatial Design', 'Web'],
+  //   liveUrl: '#',
+  //   githubUrl: 'https://github.com/NAvIN7856/Spatial-Room',
+  // },
+
+  // {
+  //   id: 'garbage-detector',
+  //   title: 'Garbage Detector',
+  //   category: 'AI / Detection',
+  //   metrics: 'Automated waste detection',
+  //   description:
+  //     'An AI-oriented project focused on detecting garbage or waste through automated visual recognition.',
+  //   detail:
+  //     'The project applies computer-vision concepts to an environmental problem. Its goal is to explore how automated detection can identify waste and potentially support smarter waste-management workflows.',
+  //   tags: ['AI', 'Computer Vision', 'Detection', 'Environment'],
+  //   liveUrl: '#',
+  //   githubUrl: 'https://github.com/NAvIN7856/Garbage-Detector',
+  // },
 ];
 
 

@@ -1629,3 +1629,46 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+
+.project-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.project-preview-container .preview-frame {
+  width: 100%;
+  min-width: 0;
+}
+
+.preview-frame {
+  position: relative;
+  width: 100%;
+  height: var(--preview-height, 220px);
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #374151;
+  border-radius: 12px;
+  box-sizing: border-box;
+  isolation: isolate;
+}
+
+.preview-scale {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1440px;
+  height: 810px;
+  transform: scale(var(--preview-scale, 0.4));
+  transform-origin: top left;
+}
+
+.preview-scale iframe {
+  display: block;
+  width: 1440px;
+  height: 810px;
+  border: 0;
+}

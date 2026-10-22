@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   ExternalLink,
   Send,
@@ -15,23 +15,30 @@ import {
   Layers,
   Terminal,
   ShieldCheck,
-} from 'lucide-react';
-import confetti from 'canvas-confetti';
-import { SkillIcon } from './SkillIcon';
+} from "lucide-react";
+import confetti from "canvas-confetti";
+import { SkillIcon } from "./SkillIcon";
 import {
   PROJECTS,
   SKILL_CATEGORIES,
   EXPERIENCES,
   PROFILE,
-} from '../data/portfolioData';
+} from "../data/portfolioData";
+import { WebsitePreview } from "./WebsitePreview";
 
 interface ContentPanelProps {
   onNavigateSection?: (index: number) => void;
 }
 
-export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection }) => {
+export const ContentPanel: React.FC<ContentPanelProps> = ({
+  onNavigateSection,
+}) => {
   const [formSent, setFormSent] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,26 +49,29 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
       particleCount: 70,
       spread: 60,
       origin: { y: 0.4 },
-      colors: ['#38bdf8', '#818cf8', '#f59e0b', '#10b981'],
+      colors: ["#38bdf8", "#818cf8", "#f59e0b", "#10b981"],
     });
 
     setTimeout(() => {
       setFormSent(false);
-      setFormData({ name: '', email: '', message: '' });
+      setFormData({ name: "", email: "", message: "" });
     }, 4000);
   };
 
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+      el.scrollIntoView({ behavior: "smooth" });
     }
   };
 
   return (
     <main className="content-scroll-flow">
       {/* ── 01 · INFORMATION (HERO) ─────────────────────────────────────── */}
-      <section id="section-information" className="scroll-page-section category-information">
+      <section
+        id="section-information"
+        className="scroll-page-section category-information"
+      >
         <div className="section-meta-header">
           <div className="category-indicator-pill">
             <span className="pill-dot" />
@@ -86,7 +96,8 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
             </div>
 
             <h1 className="hero-display-name">
-              {PROFILE.name} <span className="name-last">{PROFILE.surname}</span>
+              {PROFILE.name}{" "}
+              <span className="name-last">{PROFILE.surname}</span>
             </h1>
 
             <p className="hero-role-lead">{PROFILE.headline}</p>
@@ -96,7 +107,7 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
               <button
                 type="button"
                 className="btn-action-primary"
-                onClick={() => scrollTo('section-projects')}
+                onClick={() => scrollTo("section-projects")}
               >
                 <FolderGit2 size={16} />
                 <span>Explore Projects</span>
@@ -104,7 +115,7 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
               <button
                 type="button"
                 className="btn-action-secondary"
-                onClick={() => scrollTo('section-skills')}
+                onClick={() => scrollTo("section-skills")}
               >
                 <Code2 size={16} />
                 <span>Tech Stack</span>
@@ -112,7 +123,7 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
               <button
                 type="button"
                 className="btn-action-secondary"
-                onClick={() => scrollTo('section-experience')}
+                onClick={() => scrollTo("section-experience")}
               >
                 <Briefcase size={16} />
                 <span>Flight Log</span>
@@ -162,10 +173,7 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
             </div>
 
             <div className="spec-card-footer">
-              <a
-                href={`mailto:${PROFILE.email}`}
-                className="btn-spec-contact"
-              >
+              <a href={`mailto:${PROFILE.email}`} className="btn-spec-contact">
                 <Mail size={14} />
                 <span>Transmit Inquiry</span>
               </a>
@@ -175,7 +183,10 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
       </section>
 
       {/* ── 02 · SKILLS ──────────────────────────────────────────── */}
-      <section id="section-skills" className="scroll-page-section category-skills">
+      <section
+        id="section-skills"
+        className="scroll-page-section category-skills"
+      >
         <div className="section-meta-header">
           <div className="category-indicator-pill">
             <span className="pill-dot" />
@@ -196,7 +207,10 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
 
         <div className="skills-three-column-grid">
           {SKILL_CATEGORIES.map((cat) => (
-            <div key={cat.title} className="skill-category-solid-card hud-surface">
+            <div
+              key={cat.title}
+              className="skill-category-solid-card hud-surface"
+            >
               <div className="hud-corner top-left" />
               <div className="hud-corner top-right" />
               <div className="hud-corner bottom-left" />
@@ -208,13 +222,19 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
                 </div>
                 <div>
                   <h3 className="skill-cat-title">{cat.title}</h3>
-                  <span className="skill-cat-count">{cat.skills.length} MODULES READY</span>
+                  <span className="skill-cat-count">
+                    {cat.skills.length} MODULES READY
+                  </span>
                 </div>
               </div>
 
               <div className="skills-badge-grid">
                 {cat.skills.map((sk) => (
-                  <div key={sk.name} className="skill-badge-card" title={sk.name}>
+                  <div
+                    key={sk.name}
+                    className="skill-badge-card"
+                    title={sk.name}
+                  >
                     <div className="skill-icon-wrapper">
                       <SkillIcon name={sk.name} size={22} />
                     </div>
@@ -228,7 +248,10 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
       </section>
 
       {/* ── 03 · PROJECTS ────────────────────────────────────────── */}
-      <section id="section-projects" className="scroll-page-section category-projects">
+      <section
+        id="section-projects"
+        className="scroll-page-section category-projects"
+      >
         <div className="section-meta-header">
           <div className="category-indicator-pill">
             <span className="pill-dot" />
@@ -236,7 +259,9 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
           </div>
           <div className="astronaut-crew-tag">
             <span className="crew-dot" />
-            <span className="crew-desc">Payload Specialist — Cargo Manifest</span>
+            <span className="crew-desc">
+              Payload Specialist — Cargo Manifest
+            </span>
           </div>
         </div>
 
@@ -244,12 +269,17 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
           <div className="section-header-block">
             <h2 className="section-display-title">Payload Manifest</h2>
             <p className="section-display-subtitle">
-              Engineered software products, scalable backends, and complex interactive applications
+              Engineered software products, scalable backends, and complex
+              interactive applications
             </p>
           </div>
 
           {/* Quick jump tabs for projects */}
-          <div className="project-tabs-row" role="navigation" aria-label="Project Jump Links">
+          <div
+            className="project-tabs-row"
+            role="navigation"
+            aria-label="Project Jump Links"
+          >
             {PROJECTS.map((p, idx) => (
               <button
                 key={p.id}
@@ -296,6 +326,11 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
                       <p className="proj-detail-text">{p.detail}</p>
                     </div>
                   )}
+                  <ul className="exp-bullet-points">
+                    {p.features.map((f) => (
+                      <li key={f}>{f}</li>
+                    ))}
+                  </ul>
                 </div>
 
                 <div className="proj-side-column">
@@ -342,6 +377,7 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
                       </svg>
                     </a>
                   </div>
+                  <WebsitePreview url={p.liveUrl} title={p.title} />
                 </div>
               </div>
             </div>
@@ -350,7 +386,10 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
       </section>
 
       {/* ── 04 · EXPERIENCE & CONTACT ────────────────────────────── */}
-      <section id="section-experience" className="scroll-page-section category-experience">
+      <section
+        id="section-experience"
+        className="scroll-page-section category-experience"
+      >
         <div className="section-meta-header">
           <div className="category-indicator-pill">
             <span className="pill-dot" />
@@ -365,7 +404,8 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
         <div className="section-header-block">
           <h2 className="section-display-title">Flight Log & Uplink</h2>
           <p className="section-display-subtitle">
-            Historical mission timeline, professional trajectory, and direct communication frequency
+            Historical mission timeline, professional trajectory, and direct
+            communication frequency
           </p>
         </div>
 
@@ -407,18 +447,24 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
               </div>
               <div>
                 <h3 className="uplink-card-title">Send a Transmission</h3>
-                <span className="uplink-badge">FREQUENCY: 2.4 GHz ENCRYPTED</span>
+                <span className="uplink-badge">
+                  FREQUENCY: 2.4 GHz ENCRYPTED
+                </span>
               </div>
             </div>
             <p className="uplink-subtext">
-              Looking to collaborate, recruit, or discuss an architecture challenge? Send a signal directly to {PROFILE.email}.
+              Looking to collaborate, recruit, or discuss an architecture
+              challenge? Send a signal directly to {PROFILE.email}.
             </p>
 
             {formSent ? (
               <div className="transmission-success-box">
                 <CheckCircle2 size={36} className="text-emerald" />
                 <h4>Transmission Acknowledged</h4>
-                <p>Telemetry recorded in inbox. Expect a response within 24-48 standard hours.</p>
+                <p>
+                  Telemetry recorded in inbox. Expect a response within 24-48
+                  standard hours.
+                </p>
               </div>
             ) : (
               <form onSubmit={handleSendMessage} className="fullscreen-form">
@@ -430,7 +476,9 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
                     required
                     placeholder="Alex Rivera"
                     value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
                   />
                 </div>
                 <div className="input-field-group">
@@ -441,18 +489,24 @@ export const ContentPanel: React.FC<ContentPanelProps> = ({ onNavigateSection })
                     required
                     placeholder="alex@company.com"
                     value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, email: e.target.value })
+                    }
                   />
                 </div>
                 <div className="input-field-group">
-                  <label htmlFor="form-payload">MISSION PAYLOAD / MESSAGE</label>
+                  <label htmlFor="form-payload">
+                    MISSION PAYLOAD / MESSAGE
+                  </label>
                   <textarea
                     id="form-payload"
                     rows={4}
                     required
                     placeholder="Provide mission details, technical opportunities, or collaboration proposals…"
                     value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, message: e.target.value })
+                    }
                   />
                 </div>
                 <button type="submit" className="btn-send-uplink">
